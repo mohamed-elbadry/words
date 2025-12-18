@@ -1,25 +1,47 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-  const sourceWords = [
-    "مدرسة","سيارة","مكتبة","بطريق","كمبيوتر","قطة","شمس","حاسوب","بيت",
-    "زرافة","طاولة","دراجة","مطر","هاتف","مظلة","طائرة","سفينة","ملعقة",
-    "حديقة","دب","هدية","مسرح","نافذة","شمعة","كتاب","مستشفى","طبيب",
-    "صابون","حقيبة","بستان","جزيرة","مشروع","رياضة","تعليم","فراشة",
-    "خروف","سلحفاة","نعامة","قهوة","ساعة","باب","شاطئ","شجرة","زيتون",
-    "عصفور","وردة","ورق","مسبح","أرنب","بركات","أبوتريكه","الحضري",
-    "سيدمعوض","أحمدحسن","كهربا","مطبخ","مصباح","مسي","رونالدو","صلاح",
-    "نيمار","كرستيانو","مبابي","بنزيما","هازرد","لوكاكو","دي بروين"
-  ];
+  /* =======================
+     🧠 الكلمات حسب القسم
+  ======================= */
+  const WORD_CATEGORIES = {
+    general: {
+      name: "معلومات عامة",
+      words: [
+        "مدرسة","مكتبة","كمبيوتر","شمس","حاسوب","بيت",
+        "مستشفى","طبيب","تعليم","رياضة","كتاب","مسرح",
+        "حديقة","نافذة","مطبخ","مصباح","طاولة"
+      ]
+    },
+    people: {
+      name: "شخصيات عامة",
+      words: [
+        "أبوتريكه","الحضري","سيدمعوض","أحمدحسن",
+        "صلاح","مسي","رونالدو","نيمار","مبابي",
+        "بنزيما","كهربا"
+      ]
+    },
+    football: {
+      name: "لاعبين كرة",
+      words: [
+        "رونالدو","ميسي","صلاح","بنزيما",
+        "هازرد","لوكاكو","ديبروين","كرستيانو",
+        "نيمار","مبابي"
+      ]
+    }
+  };
 
-  const colors = [
-    {bg:'#ffe47f'},{bg:'#ffd6e5'},{bg:'#e3f9fd'},{bg:'#dfcdfa'},
-    {bg:'#caffec'},{bg:'#fff2ba'},{bg:'#ffe49d'},{bg:'#b1ffd0'}
-  ];
-
+  /* =======================
+     إعدادات عامة
+  ======================= */
+  const gridSize = 8;
   const arabicChars = "ابتثجحخدذرزسشصضطظعغفقكلمنهوي".split("");
 
-  const gridSize = 8;
+  let selectedCategory = null;
+  let sourceWords = [];
+
   let levelIndex = 0;
+  let score = 0;
+
   let grid = [];
   let wordPositions = [];
   let levelWords = [];
@@ -27,10 +49,35 @@ document.addEventListener('DOMContentLoaded', function () {
   let selectedCells = [];
   let isMouseDown = false;
 
+  /* =======================
+     عناصر الصفحة
+  ======================= */
   const ws = document.getElementById('wordsearch');
   const nextBtn = document.getElementById('next-btn');
+  const backBtn = document.getElementById('back-btn');
   const audio = document.getElementById('success-audio');
+  const scoreEl = document.getElementById('score');
 
+  /* =======================
+     اختيار القسم
+  ======================= */
+  window.selectCategory = function (key) {
+    selectedCategory = key;
+    sourceWords = WORD_CATEGORIES[key].words;
+
+    levelIndex = 0;
+    score = 0;
+    scoreEl.textContent = `النقاط: ${score}`;
+
+    document.getElementById('category-screen').style.display = "none";
+    document.querySelector('.container').style.display = "block";
+
+    renderLevel();
+  };
+
+  /* =======================
+     توليد كلمات المستوى
+  ======================= */
   function generateLevelWords(levelIdx) {
     let count = Math.min(5 + levelIdx, 10);
     return sourceWords
@@ -39,6 +86,9 @@ document.addEventListener('DOMContentLoaded', function () {
       .slice(0, count);
   }
 
+  /* =======================
+     رسم المستوى
+  ======================= */
   function renderLevel() {
     ws.innerHTML = "";
     document.getElementById('msg').textContent = "";
@@ -49,21 +99,26 @@ document.addEventListener('DOMContentLoaded', function () {
     levelWords = [];
 
     grid = Array(gridSize).fill().map(() => Array(gridSize).fill(''));
-    document.getElementById('level-info').textContent = `المستوى: ${levelIndex + 1}`;
+
+    document.getElementById('level-info').textContent =
+      `${WORD_CATEGORIES[selectedCategory].name} - المستوى ${levelIndex + 1}`;
 
     let generatedWords = generateLevelWords(levelIndex);
 
     generatedWords.forEach(word => {
       let directions = [
-        {dr:0, dc:1},{dr:1, dc:0},{dr:1, dc:1},{dr:-1, dc:1}
+        { dr: 0, dc: 1 },
+        { dr: 1, dc: 0 },
+        { dr: 1, dc: 1 },
+        { dr: -1, dc: 1 }
       ];
 
       let placed = false;
 
       for (let t = 0; t < 100 && !placed; t++) {
-        let dir = directions[Math.floor(Math.random()*directions.length)];
-        let row = Math.floor(Math.random()*gridSize);
-        let col = Math.floor(Math.random()*gridSize);
+        let dir = directions[Math.floor(Math.random() * directions.length)];
+        let row = Math.floor(Math.random() * gridSize);
+        let col = Math.floor(Math.random() * gridSize);
 
         let coords = [];
         let ok = true;
@@ -71,113 +126,143 @@ document.addEventListener('DOMContentLoaded', function () {
         for (let i = 0; i < word.length; i++) {
           let r = row + dir.dr * i;
           let c = col + dir.dc * i;
-          if (r<0||c<0||r>=gridSize||c>=gridSize ||
-             (grid[r][c] && grid[r][c] !== word[i])) {
+
+          if (
+            r < 0 || c < 0 || r >= gridSize || c >= gridSize ||
+            (grid[r][c] && grid[r][c] !== word[i])
+          ) {
             ok = false;
             break;
           }
-          coords.push({row:r,col:c});
+          coords.push({ row: r, col: c });
         }
 
         if (ok) {
-          coords.forEach((p,i)=>grid[p.row][p.col]=word[i]);
-          wordPositions.push({word, coords, wIdx: levelWords.length});
+          coords.forEach((p, i) => grid[p.row][p.col] = word[i]);
+          wordPositions.push({ coords, wIdx: levelWords.length });
           levelWords.push(word);
           placed = true;
         }
       }
     });
 
-    for (let i=0;i<gridSize;i++)
-      for (let j=0;j<gridSize;j++)
+    for (let i = 0; i < gridSize; i++)
+      for (let j = 0; j < gridSize; j++)
         if (!grid[i][j])
-          grid[i][j] = arabicChars[Math.floor(Math.random()*arabicChars.length)];
+          grid[i][j] = arabicChars[Math.floor(Math.random() * arabicChars.length)];
 
     ws.style.gridTemplateColumns = `repeat(${gridSize}, 38px)`;
 
     grid.flat().forEach((char, idx) => {
-  let cell = document.createElement('div');
-  cell.className = 'cell';
-  cell.textContent = char;
-  cell.dataset.key = Math.floor(idx/gridSize)+","+idx%gridSize;
-  cell.onmousedown = ()=>handleDown(cell);
-  cell.onmouseenter = ()=>handleEnter(cell);
-  cell.onmouseup = handleUp;
+      let cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.textContent = char;
+      cell.dataset.key = Math.floor(idx / gridSize) + "," + idx % gridSize;
 
-  // دعم اللمس
-  cell.ontouchstart = (e) => { 
-    e.preventDefault(); // لمنع التكبير التلقائي وغيره
-    handleDown(cell); 
-  };
-  cell.ontouchmove = (e) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const el = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (el && el.classList.contains('cell')) handleEnter(el);
-  };
-  cell.ontouchend = (e) => { 
-    e.preventDefault();
-    handleUp(); 
-  };
+      cell.onmousedown = () => handleDown(cell);
+      cell.onmouseenter = () => handleEnter(cell);
+      cell.onmouseup = handleUp;
 
-  ws.appendChild(cell);
-});
+      cell.ontouchstart = e => {
+        e.preventDefault();
+        handleDown(cell);
+      };
 
+      cell.ontouchmove = e => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (el && el.classList.contains('cell')) handleEnter(el);
+      };
+
+      cell.ontouchend = e => {
+        e.preventDefault();
+        handleUp();
+      };
+
+      ws.appendChild(cell);
+    });
 
     document.getElementById('words-list').innerHTML =
-      `<div class="words-row">${levelWords.map((w,i)=>`<span id="word-${i}">${w}</span>`).join('')}</div>`;
+      `<div class="words-row">
+        ${levelWords.map((w, i) => `<span id="word-${i}">${w}</span>`).join('')}
+       </div>`;
 
     nextBtn.disabled = true;
   }
 
-  function handleDown(cell){
+  /* =======================
+     التحكم في السحب
+  ======================= */
+  function handleDown(cell) {
     isMouseDown = true;
     selectedCells = [cell.dataset.key];
     cell.classList.add('selected');
   }
 
-  function handleEnter(cell){
-    if(!isMouseDown) return;
-    if(!selectedCells.includes(cell.dataset.key)){
+  function handleEnter(cell) {
+    if (!isMouseDown) return;
+    if (!selectedCells.includes(cell.dataset.key)) {
       cell.classList.add('selected');
       selectedCells.push(cell.dataset.key);
     }
   }
 
-  function handleUp(){
-    if(selectedCells.length) checkWord();
-    ws.querySelectorAll('.selected').forEach(c=>c.classList.remove('selected'));
+  function handleUp() {
+    if (selectedCells.length) checkWord();
+    ws.querySelectorAll('.selected').forEach(c => c.classList.remove('selected'));
     selectedCells = [];
     isMouseDown = false;
   }
 
-  function checkWord(){
-    wordPositions.forEach(({word,coords,wIdx})=>{
-      if(foundWords.includes(wIdx)) return;
-      let keys = coords.map(c=>`${c.row},${c.col}`);
-      if(JSON.stringify(keys) === JSON.stringify(selectedCells)){
+  /* =======================
+     التحقق من الكلمة + النقاط
+  ======================= */
+  function checkWord() {
+    wordPositions.forEach(({ coords, wIdx }) => {
+      if (foundWords.includes(wIdx)) return;
+
+      let keys = coords.map(c => `${c.row},${c.col}`);
+      if (JSON.stringify(keys) === JSON.stringify(selectedCells)) {
         foundWords.push(wIdx);
-        coords.forEach(c=>{
-          ws.children[c.row*gridSize+c.col]
-            .classList.add(`found${wIdx%8}`);
+
+        score += 10;
+        scoreEl.textContent = `النقاط: ${score}`;
+
+        coords.forEach(c => {
+          ws.children[c.row * gridSize + c.col]
+            .classList.add(`found${wIdx % 8}`);
         });
+
         document.getElementById(`word-${wIdx}`).classList.add('word-found');
         audio && audio.play();
       }
     });
 
-    if(foundWords.length === levelWords.length){
+    if (foundWords.length === levelWords.length) {
       document.getElementById('msg').textContent = "🎉 أنهيت هذا المستوى!";
       nextBtn.disabled = false;
     }
   }
 
-  function nextLevel(){
+  /* =======================
+     المستوى التالي
+  ======================= */
+  nextBtn.addEventListener('click', () => {
     levelIndex++;
     renderLevel();
-  }
+  });
 
-  nextBtn.addEventListener('click', nextLevel);
-  renderLevel();
+  /* =======================
+     الرجوع للرئيسية
+  ======================= */
+  backBtn.addEventListener('click', () => {
+    document.querySelector('.container').style.display = "none";
+    document.getElementById('category-screen').style.display = "block";
+
+    ws.innerHTML = "";
+    document.getElementById('words-list').innerHTML = "";
+    document.getElementById('msg').textContent = "";
+  });
 
 });

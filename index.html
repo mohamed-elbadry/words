@@ -8,23 +8,48 @@
     <title>Search for words</title>
 </head>
 <body>
-    
-   
-  <div class="container">
-    <h2>لعبة البحث عن الكلمات</h2>
-    <div id="level-info"></div>
-    <div id="wordsearch"></div>
-    <div>
-      <h3 class="word">: الكلمات المطلوبة</h3>
-      <div id="words-list"></div>
-    </div>
-    <div id="msg"></div>
-   <button id="next-btn" disabled>المستوى التالي</button>
-    <audio id="success-audio" src="success.mp3"></audio>
+
+  <!-- شاشة اختيار القسم -->
+  <div id="category-screen" class="category-screen">
+    <h2>اختر نوع اللعبة</h2>
+    <button onclick="selectCategory('general')">🧠 معلومات عامة</button>
+    <button onclick="selectCategory('people')">👤 شخصيات عامة</button>
+    <button onclick="selectCategory('football')">⚽ لاعبين كرة</button>
   </div>
 
+  <!-- اللعبة -->
+  <div class="container" style="display:none">
 
-<!-- App js -->
-<script src="js/script.js"></script>
+   
+  <h2>لعبة البحث عن الكلمات</h2>
+
+  <!-- شريط المعلومات -->
+  <div class="top-bar">
+    <div id="level-info"></div>
+    <div id="score">النقاط: 0</div>
+  </div>
+
+  <div id="wordsearch"></div>
+
+  <div>
+    <h3 class="word">: الكلمات المطلوبة</h3>
+    <div id="words-list"></div>
+  </div>
+
+  <div id="msg"></div>
+
+<div class="buttons">
+  <button id="next-btn" disabled>المستوى التالي</button>
+  <button id="back-btn">⬅️ العودة إلى الرئيسية</button>
+</div>
+
+
+  <audio id="success-audio" src="success.mp3"></audio>
+
+
+  </div>
+
+  <script src="js/script.js"></script>
 </body>
+
 </html>
