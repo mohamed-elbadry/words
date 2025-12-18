@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 
   /* =======================
-     🧠 الكلمات حسب القسم
+     كلمات حسب القسم
   ======================= */
   const WORD_CATEGORIES = {
     general: {
@@ -15,17 +15,18 @@ document.addEventListener('DOMContentLoaded', function () {
     people: {
       name: "شخصيات عامة",
       words: [
-        "أبوتريكه","الحضري","سيدمعوض","أحمدحسن",
-        "صلاح","مسي","رونالدو","نيمار","مبابي",
-        "بنزيما","كهربا"
+        "عباس العقاد","أسامه الباز","فاروق جويدة","أحمد زويل",
+        "هشام الجخ","عبد الرحمان الأبنودي","محمد صلاح","مصطفي شاهين",
+        "عادل إمام","أم كلثوم"
       ]
     },
     football: {
       name: "لاعبين كرة",
       words: [
         "رونالدو","ميسي","صلاح","بنزيما",
-        "هازرد","لوكاكو","ديبروين","كرستيانو",
-        "نيمار","مبابي"
+        "هازرد","لوكاكو","كيفن ديبروين","كرستيانو",
+        "نيمار","مبابي",
+        "أبوتريكه","الحضري","سيد معوض","أحمد حسن"
       ]
     }
   };
@@ -40,40 +41,42 @@ document.addEventListener('DOMContentLoaded', function () {
   let sourceWords = [];
 
   let levelIndex = 0;
-  let score = 0;
-
   let grid = [];
   let wordPositions = [];
   let levelWords = [];
   let foundWords = [];
   let selectedCells = [];
   let isMouseDown = false;
+  let score = 0;
 
-  /* =======================
-     عناصر الصفحة
-  ======================= */
   const ws = document.getElementById('wordsearch');
   const nextBtn = document.getElementById('next-btn');
   const backBtn = document.getElementById('back-btn');
   const audio = document.getElementById('success-audio');
-  const scoreEl = document.getElementById('score');
+  const scoreDisplay = document.getElementById('score');
 
   /* =======================
      اختيار القسم
   ======================= */
   window.selectCategory = function (key) {
     selectedCategory = key;
-    sourceWords = WORD_CATEGORIES[key].words;
-
-    levelIndex = 0;
-    score = 0;
-    scoreEl.textContent = `النقاط: ${score}`;
+    sourceWords = WORD_CATEGORIES[key].words.map(w => w.replace(/ /g, "-")); // استبدال المسافات بعلامة داخل الشبكة
 
     document.getElementById('category-screen').style.display = "none";
     document.querySelector('.container').style.display = "block";
 
+    levelIndex = 0;
+    score = 0;
+    updateScore();
     renderLevel();
   };
+
+  /* =======================
+     تحديث النقاط
+  ======================= */
+  function updateScore() {
+    scoreDisplay.textContent = `النقاط: ${score}`;
+  }
 
   /* =======================
      توليد كلمات المستوى
@@ -138,14 +141,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (ok) {
-          coords.forEach((p, i) => grid[p.row][p.col] = word[i]);
-          wordPositions.push({ coords, wIdx: levelWords.length });
+          coords.forEach((p, i) => {
+            // استبدال "-" بالفراغ داخل الشبكة
+            grid[p.row][p.col] = word[i] === "-" ? " " : word[i];
+          });
+          wordPositions.push({ word, coords, wIdx: levelWords.length });
           levelWords.push(word);
           placed = true;
         }
       }
     });
 
+    // ملء باقي الخلايا بحروف عشوائية
     for (let i = 0; i < gridSize; i++)
       for (let j = 0; j < gridSize; j++)
         if (!grid[i][j])
@@ -183,9 +190,10 @@ document.addEventListener('DOMContentLoaded', function () {
       ws.appendChild(cell);
     });
 
+    // عرض الكلمات بدون "-"
     document.getElementById('words-list').innerHTML =
       `<div class="words-row">
-        ${levelWords.map((w, i) => `<span id="word-${i}">${w}</span>`).join('')}
+        ${levelWords.map((w, i) => `<span id="word-${i}">${w.replace(/-/g, " ")}</span>`).join('')}
        </div>`;
 
     nextBtn.disabled = true;
@@ -216,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* =======================
-     التحقق من الكلمة + النقاط
+     التحقق من الكلمة
   ======================= */
   function checkWord() {
     wordPositions.forEach(({ coords, wIdx }) => {
@@ -225,9 +233,8 @@ document.addEventListener('DOMContentLoaded', function () {
       let keys = coords.map(c => `${c.row},${c.col}`);
       if (JSON.stringify(keys) === JSON.stringify(selectedCells)) {
         foundWords.push(wIdx);
-
-        score += 10;
-        scoreEl.textContent = `النقاط: ${score}`;
+        score += 5; // إضافة نقاط لكل كلمة
+        updateScore();
 
         coords.forEach(c => {
           ws.children[c.row * gridSize + c.col]
@@ -254,15 +261,11 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   /* =======================
-     الرجوع للرئيسية
+     العودة للقائمة الرئيسية
   ======================= */
   backBtn.addEventListener('click', () => {
     document.querySelector('.container').style.display = "none";
     document.getElementById('category-screen').style.display = "block";
-
-    ws.innerHTML = "";
-    document.getElementById('words-list').innerHTML = "";
-    document.getElementById('msg').textContent = "";
   });
 
 });

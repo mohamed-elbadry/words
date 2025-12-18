@@ -1,162 +1,13 @@
-body {
-  font-family: Cairo, Tahoma, Arial, sans-serif;
-  background: #f8fbff;
-  min-height: 100vh;
-  margin: 0;
-}
-
-.category-screen {
-  text-align: center;
-  margin-top: 60px;
-}
-
-.category-screen button {
-  display: block;
-  margin: 15px auto;
-  padding: 12px 25px;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-}
-
-h2 {
-  color: #1565c0;
-  margin-bottom:10px;
-}
-.word{
-    display: flex;
-    
-}
-#level-info { 
-  font-size:20px; 
-  color: #383; 
-  margin-bottom:10px;
-  text-align: center;
-}
-#score{
-  
-  margin-bottom:10px;
-  text-align: center;
-}
-#wordsearch {
-  display: grid;
-  justify-content: center;
-  grid-template-columns: repeat(8, 38px);
-  gap: 2px;
-  margin-bottom: 22px;
-  user-select: none;
-}
-
-.cell {
-  width: 36px;
-  height: 36px;
-  text-align: center;
-  font-size: 23px;
-  border: 1px solid #aaa;
-  cursor: pointer;
-  background: #fff;
-  transition: background 0.3s, border 0.2s;
-  position: relative;
-  user-select: none;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-
-.cell.selected {
-  box-shadow: 0 0 8px #6ac2ff;
-  background: #b8e6fb;
-  border:2px solid #0686c2;
-  z-index:2;
-}
-
-.cell.found0 { background:#ffe47f !important; border-bottom: 4px solid #f8c800; color:#ca9300; font-weight:900; }
-.cell.found1 { background:#ffd6e5 !important; border-bottom: 4px solid #dc4488; color:#a11052; font-weight:900; }
-.cell.found2 { background:#e3f9fd !important; border-bottom: 4px solid #0aa0e3; color:#1e4179; font-weight:900; }
-.cell.found3 { background:#dfcdfa !important; border-bottom: 4px solid #aa5ef0; color:#663ca2; font-weight:900; }
-.cell.found4 { background:#caffec !important; border-bottom: 4px solid #1cd282; color:#13684a; font-weight:900; }
-.cell.found5 { background:#fff2ba !important; border-bottom: 4px solid #e1b200; color:#715507; font-weight:900; }
-.cell.found6 { background:#ffe49d !important; border-bottom: 4px solid #ff9900; color:#ac6600; font-weight:900;}
-.cell.found7 { background:#b1ffd0 !important; border-bottom: 4px solid #2bba37; color:#126325; font-weight:900;}
-
-#words-list {
-  display: flex;
-  flex-direction: column;
-  gap:10px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-#words-list .words-row {
-  display: flex;
-  flex-flow: row wrap;
-  gap:8px;
-  margin-bottom: 4px;
-  justify-content: center;
-}
-
-#words-list span {
-  padding:5px 14px;
-  background:#eee;
-  border-radius:8px;
-  font-size:21px;
-  border-bottom:4px solid #444;
-  display:inline-block;
-  transition:all 0.3s;
-}
-
-span.word-found {
-  background:#bbffd0!important;
-  color:#035b1b;
-  font-weight: bold;
-  border-bottom-width:6px;
-}
-
-button {
-  padding:10px 28px;
-  font-size:22px;
-  border-radius:8px;
-  border:none;
-  background: #369afd;
-  color: #fff;
-  cursor: pointer;
-  margin: 15px 0;
-  font-family:inherit;
-  margin-bottom: 25px;
-}
-button:disabled {
-  background: #dddddd !important;
-  color: #999 !important;
-  cursor: not-allowed;
-}
-#msg {
-  margin: 16px 0 0 0;
-  font-size: 22px;
-  color: #007060;
-  min-height:28px;
-  text-align: center;
-}
-
-
-
-
-
 /* ===== Reset بسيط ===== */
 * {
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  font-family: Cairo, Tahoma, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 /* ===== جسم الصفحة ===== */
 body {
-  margin: 0;
   min-height: 100vh;
   background: #f5f7fa;
   display: flex;
@@ -168,47 +19,70 @@ body {
 /* ===== شاشة اختيار المستوى ===== */
 .category-screen {
   text-align: center;
+  margin-top: 60px;
 }
 
 .category-screen h2 {
   margin-bottom: 25px;
+  color: #1565c0;
 }
 
 .category-screen button {
+  display: block;
   width: 260px;
   margin: 10px auto;
   padding: 14px;
   font-size: 18px;
   cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background-color: #369afd;
+  color: #fff;
+  transition: background 0.3s;
+}
+
+.category-screen button:hover {
+  background-color: #2570d6;
 }
 
 /* ===== صندوق اللعبة ===== */
 .container {
-  /* background: #ffffff;
-  padding: 25px 30px; */
-  border-radius: 10px;
-  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
   text-align: center;
-  /* box-shadow: 0 10px 25px rgba(0,0,0,.1); */
+  width: fit-content;
+  margin: 20px 0;
 }
 
 /* ===== عنوان اللعبة ===== */
 .container h2 {
+  color: #1565c0;
   margin-bottom: 10px;
 }
 
-/* ===== المستوى ===== */
-#level-info {
+/* ===== شريط المعلومات ===== */
+#level-info, #score {
+  font-size: 20px;
+  color: #383;
+  margin-bottom: 10px;
+  text-align: center;
   font-weight: bold;
-  margin-bottom: 15px;
 }
 
+.word{
+  margin: 10px 0;
+  display: flex;
+}
 /* ===== الشبكة ===== */
 #wordsearch {
   display: grid;
+  grid-template-columns: repeat(8, 38px);
   gap: 4px;
   justify-content: center;
-  margin: 0 auto 15px;
+  margin-bottom: 15px;
+  user-select: none;
 }
 
 /* ===== الخلايا ===== */
@@ -216,77 +90,103 @@ body {
   width: 38px;
   height: 38px;
   line-height: 38px;
+  text-align: center;
+  font-size: 18px;
   border: 1px solid #ddd;
   cursor: pointer;
-  user-select: none;
-  font-size: 18px;
   background: #fff;
+  border-radius: 5px;
+  transition: background 0.3s, border 0.2s;
+  user-select: none;
 }
 
-/* ===== تحديد الخلايا ===== */
 .cell.selected {
   background: #cce5ff;
+  border: 2px solid #0686c2;
 }
 
-/* ===== كلمات مطلوبة ===== */
-.word {
-  margin: 10px 30px;
-}
+.cell.found0 { background:#ffe47f; border-bottom:4px solid #f8c800; color:#ca9300; font-weight:900; }
+.cell.found1 { background:#ffd6e5; border-bottom:4px solid #dc4488; color:#a11052; font-weight:900; }
+.cell.found2 { background:#e3f9fd; border-bottom:4px solid #0aa0e3; color:#1e4179; font-weight:900; }
+.cell.found3 { background:#dfcdfa; border-bottom:4px solid #aa5ef0; color:#663ca2; font-weight:900; }
+.cell.found4 { background:#caffec; border-bottom:4px solid #1cd282; color:#13684a; font-weight:900; }
+.cell.found5 { background:#fff2ba; border-bottom:4px solid #e1b200; color:#715507; font-weight:900; }
+.cell.found6 { background:#ffe49d; border-bottom:4px solid #ff9900; color:#ac6600; font-weight:900; }
+.cell.found7 { background:#b1ffd0; border-bottom:4px solid #2bba37; color:#126325; font-weight:900; }
 
+/* ===== الكلمات المطلوبة ===== */
 #words-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
   margin-bottom: 15px;
+}
+
+#words-list .words-row {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 8px;
+  justify-content: center;
 }
 
 #words-list span {
   display: inline-block;
-  margin: 5px 8px;
   padding: 4px 8px;
-  border-bottom: 2px solid #999;
+  font-size: 18px;
+  background: #eee;
+  border-radius: 8px;
+  border-bottom: 2px solid #444;
+  transition: all 0.3s;
 }
 
-/* ===== كلمة تم إيجادها ===== */
-.word-found {
-  color: green;
+span.word-found {
+  background: #bbffd0 !important;
+  color: #035b1b;
+  font-weight: bold;
+  border-bottom-width: 4px;
   text-decoration: line-through;
 }
 
-/* ===== زر التالي ===== */
-#next-btn {
-  margin-top: 10px;
-  padding: 10px 22px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-#next-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-#back-btn {
-  margin-top: 10px;
-  padding: 10px 22px;
-  font-size: 16px;
-  cursor: pointer;
-}
-/* ===== رسالة الفوز ===== */
+/* ===== الرسائل ===== */
 #msg {
-  margin-top: 10px;
+  margin: 16px 0 0 0;
+  font-size: 22px;
+  color: #007060;
+  min-height: 28px;
+  text-align: center;
   font-weight: bold;
 }
 
+/* ===== الأزرار ===== */
 .buttons {
   display: flex;
-  flex-direction: column; /* يحط الزرارين تحت بعض */
- 
+  flex-direction: column;
   align-items: center;    /* يجعل الزرارين في المنتصف */
+  gap: 10px;
+  margin-top: 15px;
 }
 
 .buttons button {
-  display: inline-block;   /* الحجم على قد النص */
-  padding: 4px 12px;       /* مسافة داخلية مريحة */
-  font-size: 14px;         /* حجم الخط */
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: 16px;
   cursor: pointer;
-  white-space: nowrap;     /* يمنع التفريغ على أكثر من سطر */
+  border-radius: 6px;
+  border: none;
+  background-color: #369afd;
+  color: #fff;
+  white-space: nowrap;
+  transition: background 0.3s;
 }
 
+.buttons button:disabled {
+  background: #dddddd;
+  color: #999;
+  cursor: not-allowed;
+}
 
+.buttons button:hover:not(:disabled) {
+  background-color: #2570d6;
+}
