@@ -94,15 +94,33 @@ document.addEventListener('DOMContentLoaded', function () {
     ws.style.gridTemplateColumns = `repeat(${gridSize}, 38px)`;
 
     grid.flat().forEach((char, idx) => {
-      let cell = document.createElement('div');
-      cell.className = 'cell';
-      cell.textContent = char;
-      cell.dataset.key = Math.floor(idx/gridSize)+","+idx%gridSize;
-      cell.onmousedown = ()=>handleDown(cell);
-      cell.onmouseenter = ()=>handleEnter(cell);
-      cell.onmouseup = handleUp;
-      ws.appendChild(cell);
-    });
+  let cell = document.createElement('div');
+  cell.className = 'cell';
+  cell.textContent = char;
+  cell.dataset.key = Math.floor(idx/gridSize)+","+idx%gridSize;
+  cell.onmousedown = ()=>handleDown(cell);
+  cell.onmouseenter = ()=>handleEnter(cell);
+  cell.onmouseup = handleUp;
+
+  // دعم اللمس
+  cell.ontouchstart = (e) => { 
+    e.preventDefault(); // لمنع التكبير التلقائي وغيره
+    handleDown(cell); 
+  };
+  cell.ontouchmove = (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (el && el.classList.contains('cell')) handleEnter(el);
+  };
+  cell.ontouchend = (e) => { 
+    e.preventDefault();
+    handleUp(); 
+  };
+
+  ws.appendChild(cell);
+});
+
 
     document.getElementById('words-list').innerHTML =
       `<div class="words-row">${levelWords.map((w,i)=>`<span id="word-${i}">${w}</span>`).join('')}</div>`;
